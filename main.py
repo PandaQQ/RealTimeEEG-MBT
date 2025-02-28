@@ -3,14 +3,16 @@
 # Press ⌃R to execute it or replace it with your code.
 # Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
 
+import subprocess
+import os
+import sys
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press ⌘F8 to toggle the breakpoint.
+
+def run_training():
+    script_path = os.path.join(os.path.dirname(__file__), 'training', 'spa_export.py')
+    subprocess.run([sys.executable, script_path], check=True)
 
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    run_training()
