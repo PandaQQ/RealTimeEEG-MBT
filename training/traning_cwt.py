@@ -121,6 +121,9 @@ my_data_test = my_Dataset(data_test, label_test)
 train_dataloader = DataLoader(my_data_train, batch_size=batch_size, shuffle=True)
 test_dataloader = DataLoader(my_data_test, batch_size=batch_size, shuffle=True)
 
+# print kernel size (data.shape[2], 1)
+print(data.shape[2])
+
 
 class my_cnn(nn.Module):
     def __init__(self):
