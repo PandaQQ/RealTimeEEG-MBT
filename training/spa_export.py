@@ -12,7 +12,7 @@ import scipy.io
 from sklearn.decomposition import PCA
 
 # Path to the EEGLAB .set file (make sure the corresponding .fdt file is in the same location)
-file_path = "./data/wireless_raw.set"
+file_path = "./data/wireless_raw_8.set"
 # Load the data
 raw = mne.io.read_raw_eeglab(file_path, preload=True)
 
@@ -34,7 +34,9 @@ raw._data = eeg_data_in_volts
 # SPA: Second-by-second cleaning using PCA
 cutoff = 50  # No need to change (50 - 200)
 seg_length = int(raw.info['sfreq'])  # 1-second segments
+print("seg_length: ", seg_length)
 n_segments = int(raw.n_times / seg_length)
+print("n_segments: ", n_segments)
 data_clean = raw.get_data()
 
 for j in range(n_segments):
@@ -66,8 +68,10 @@ lats = [event[0] for event in events if event[2] in [2, 3]]
 data_relax = []
 data_calcu = []
 
-for j in range(60):
+# for j in range(60):
+for j in range(48):
     # Relaxation segment
+    # print j with eol
     start = lats[j * 2]
     end = start + int(30 * seg_length)
     relax_segment = raw.get_data(start=start, stop=end)

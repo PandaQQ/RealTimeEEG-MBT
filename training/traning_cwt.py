@@ -36,7 +36,10 @@ label = temp['labels']
 del temp
 
 CHANNELS = 24
-TOTAL_TIME_FRAME = 3251
+# TOTAL_TIME_FRAME = 3251
+# 1800 for training, 1451 for testing
+TOTAL_TRAIN_SET = 48*30
+TOTAL_TIME_FRAME = 2639
 FREQUENCY = 100
 
 data_cwt1 = np.empty((CHANNELS, 20, FREQUENCY, TOTAL_TIME_FRAME))
@@ -72,17 +75,17 @@ label = torch.tensor(label, device=device, dtype=torch.long)
 # label_train = label[temp[:1800]]
 # label_test = label[temp[1800:]]
 
-TRAIN_SET_SIZE = TOTAL_TIME_FRAME - 1800
+TRAIN_SET_SIZE = TOTAL_TIME_FRAME - TOTAL_TRAIN_SET
 
-temp = torch.randperm(1800)
-data = data[torch.cat((temp[:TRAIN_SET_SIZE], torch.arange(1800, TOTAL_TIME_FRAME))), :, :, :]
-label = label[torch.cat((temp[:TRAIN_SET_SIZE], torch.arange(1800, TOTAL_TIME_FRAME)))]
+temp = torch.randperm(TOTAL_TRAIN_SET)
+data = data[torch.cat((temp[:TRAIN_SET_SIZE], torch.arange(TOTAL_TRAIN_SET, TOTAL_TIME_FRAME))), :, :, :]
+label = label[torch.cat((temp[:TRAIN_SET_SIZE], torch.arange(TOTAL_TRAIN_SET, TOTAL_TIME_FRAME)))]
 
 temp = torch.randperm(TRAIN_SET_SIZE * 2)
-data_train = data[temp[:1800], :, :, :]
-data_test = data[temp[1800:], :, :, :]
-label_train = label[temp[:1800]]
-label_test = label[temp[1800:]]
+data_train = data[temp[:TOTAL_TRAIN_SET], :, :, :]
+data_test = data[temp[TOTAL_TRAIN_SET:], :, :, :]
+label_train = label[temp[:TOTAL_TRAIN_SET]]
+label_test = label[temp[TOTAL_TRAIN_SET:]]
 
 
 # conv1 = nn.Conv2d(10, 10, (46,1))
