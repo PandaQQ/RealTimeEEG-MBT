@@ -40,7 +40,7 @@ CHANNELS = 24
 # 1800 for training, 1451 for testing
 TOTAL_TRAIN_SET = 48*30
 TOTAL_TIME_FRAME = 2639
-FREQUENCY = 100
+FREQUENCY = 125
 
 data_cwt1 = np.empty((CHANNELS, 20, FREQUENCY, TOTAL_TIME_FRAME))
 scale = np.array([1., 1.25, 1.5625, 1.953125, 2.44140625,
@@ -134,7 +134,7 @@ class my_cnn(nn.Module):
         self.conv3 = nn.Conv2d(20, 1, (1, 1))
         self.pool2 = nn.MaxPool2d((1, 20))
         self.pool3 = nn.MaxPool2d((1, 1))
-        self.fc1 = nn.Linear(250 * 1, 32)
+        self.fc1 = nn.Linear(50 * (FREQUENCY // 20), 32)
         self.fc2 = nn.Linear(32, 2)
         self.drop = nn.Dropout(p=0.1)
 

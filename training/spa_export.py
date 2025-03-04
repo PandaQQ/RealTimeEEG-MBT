@@ -21,7 +21,7 @@ montage = mne.channels.make_standard_montage('standard_1005')
 raw.set_montage(montage)
 
 # Resample data to 100 Hz
-raw.resample(100)
+raw.resample(125)
 
 # Band-pass filter between 1 and 45 Hz
 raw.filter(1., 45., fir_design='firwin')
