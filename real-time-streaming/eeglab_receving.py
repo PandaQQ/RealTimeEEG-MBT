@@ -10,11 +10,11 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(script_dir)  # Project root
 sys.path.append(parent_dir)
 
-from lib.preprocessing import spa_cleaning_by_second, cwt_transform_pywt
+from lib.preprocessing import spa_cleaning_by_second, cwt_transform_pywt, freq_adjust
 from lib.eeg_cnn_predictor import EEGCNNPredictor
 
 # Load model
-model_path = '../models/eeg_cnn_model.pth'
+model_path = './models/eeg_cnn_model.pth'
 predictor = EEGCNNPredictor(model_path, device='mps')
 
 # After defining the desired channels and before the while loop
@@ -39,7 +39,6 @@ print("EEG stream resolved. Receiving data...")
 info = inlet.info()
 sfreq = info.nominal_srate()
 n_channels = info.channel_count()
-
 
 # Define chunk duration in seconds and calculate the number of samples per chunk
 chunk_duration = 1.0  # seconds
@@ -79,8 +78,9 @@ while True:
     # Print the shape of the data chunk
     print(f"Data chunk shape: {data_chunk.shape}")
 
+    adjust_data_chunk = freq_adjust(data_chunk, from_freq=250, to_freq=125)
     # Perform SPA Cleaning
-    clean_data = spa_cleaning_by_second(data_chunk)
+    clean_data = spa_cleaning_by_second(adjust_data_chunk)
     # Perform time-frequency decomposition using Morlet wavelets
     power = cwt_transform_pywt(clean_data)
 

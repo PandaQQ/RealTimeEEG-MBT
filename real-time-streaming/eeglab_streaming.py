@@ -5,7 +5,7 @@ import sys
 import os
 
 # Load EEG data from WM_Oct8_testing.vhdr file
-eeglab_file = '../data/wireless_raw_2.set'
+eeglab_file = './data/wireless_raw_2.set'
 raw = mne.io.read_raw_eeglab(eeglab_file, preload=True)
 
 # Add standard electrode locations
@@ -13,7 +13,7 @@ montage = mne.channels.make_standard_montage('standard_1005')
 raw.set_montage(montage)
 
 # Resample data to 100 Hz
-raw.resample(125)
+raw.resample(250)
 
 # Band-pass filter between 1 and 45 Hz
 raw.filter(1., 45., fir_design='firwin')
