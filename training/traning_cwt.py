@@ -27,7 +27,7 @@ os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 device = 'mps'
 
 batch_size = 512
-temp = loadmat('EEG_SPA_001.mat')
+temp = loadmat('./training/EEG_SPA_001.mat')
 # temp = loadmat('EEG_001_SPA_MATLAB.mat')
 # temp = loadmat('EEG_001_SPA_DS.mat')
 
@@ -39,13 +39,19 @@ CHANNELS = 24
 TOTAL_TIME_FRAME = 3251
 FREQUENCY = 100
 
-data_cwt1 = np.empty((CHANNELS, 49, FREQUENCY, TOTAL_TIME_FRAME))
+data_cwt1 = np.empty((CHANNELS, 20, FREQUENCY, TOTAL_TIME_FRAME))
+scale = np.array([1., 1.25, 1.5625, 1.953125, 2.44140625,
+                  3.05175781, 3.81469727, 4.76837158, 5.96046448, 7.4505806,
+                  9.31322575, 11.64153218, 14.55191523, 18.18989404, 22.73736754,
+                  28.42170943, 35.52713679, 44.40892099, 55.51115123, 69.38893904])
+
 for j in range(data.shape[0]):
     if j % 100 == 0:
         print(j)
     for k in range(data.shape[1]):
         temp_seg = data[j, k, :]
-        coef, freqs = pywt.cwt(temp_seg, np.arange(1, 50), 'cmor1-1')
+        # coef, freqs = pywt.cwt(temp_seg, np.arange(1, 50), 'cmor1-1')
+        coef, freqs = pywt.cwt(temp_seg, scale, 'cmor1-1')
         freqs = freqs * data.shape[2]
         data_cwt1[k, :, :, j] = abs(coef)
 
@@ -191,7 +197,7 @@ for t in range(epoch):
 
 #  Save Model
 print("Saving model...")
-torch.save(model.state_dict(), "../models/eeg_cnn_model.pth")
+torch.save(model.state_dict(), "./models/eeg_cnn_model.pth")
 print("Model saved as eeg_cnn_model.pth")
 
 # plt.plot(accu_record)

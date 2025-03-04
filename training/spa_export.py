@@ -12,7 +12,7 @@ import scipy.io
 from sklearn.decomposition import PCA
 
 # Path to the EEGLAB .set file (make sure the corresponding .fdt file is in the same location)
-file_path = "../data/wireless_raw.set"
+file_path = "./data/wireless_raw.set"
 # Load the data
 raw = mne.io.read_raw_eeglab(file_path, preload=True)
 
@@ -91,4 +91,4 @@ data = np.concatenate((data_relax, data_calcu), axis=0)
 # save labels data as (3121, 1)
 labels = np.concatenate((np.zeros(data_relax.shape[0]), np.ones(data_calcu.shape[0]))).reshape(-1, 1)
 # Save to MAT file
-scipy.io.savemat('EEG_SPA_001.mat', {'data': data, 'labels': labels})
+scipy.io.savemat('./training/EEG_SPA_001.mat', {'data': data, 'labels': labels})
