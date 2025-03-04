@@ -27,9 +27,4 @@ array([ 1.        ,  1.25      ,  1.5625    ,  1.953125  ,  2.44140625,
 
 ### 40 mins session
 - 80% for training
-- 20 % for testing
-
-
-
-
-
+- 20% for testing
