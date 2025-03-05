@@ -23,8 +23,8 @@ import pywt
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 
 # device = 'cuda' if torch.cuda.is_available() else 'cpu'
-# device = 'cpu'
-device = 'mps'
+device = 'cpu'
+# device = 'mps'
 
 batch_size = 512
 temp = loadmat('./training/EEG_SPA_001.mat')
