@@ -3,6 +3,8 @@ import time
 import binascii
 from threading import Lock
 
+COM_PORT = 'COM3'
+
 class SerialPort:
     _instance = None
     _lock = Lock()
@@ -34,7 +36,7 @@ class SerialPort:
         self.port.write(data)
 
 def show_red():
-    serialPort = 'COM3'
+    serialPort = COM_PORT
     baudRate = 9600
     RED = bytes.fromhex('11')
     mSerial = SerialPort(serialPort, baudRate)
@@ -42,7 +44,7 @@ def show_red():
     mSerial.send_data(RED)
 
 def show_green():
-    serialPort = 'COM3'
+    serialPort = COM_PORT
     baudRate = 9600
     GREEN = bytes.fromhex('14')
     mSerial = SerialPort(serialPort, baudRate)
@@ -50,7 +52,7 @@ def show_green():
     mSerial.send_data(GREEN)
 
 def close():
-    serialPort = 'COM3'
+    serialPort = COM_PORT
     baudRate = 9600
     CLOSERED = bytes.fromhex('21')
     CLOSEYE = bytes.fromhex('22')
