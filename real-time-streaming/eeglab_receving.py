@@ -4,6 +4,7 @@ import numpy as np
 from pylsl import StreamInlet, resolve_streams
 import mne
 import matplotlib.pyplot as plt
+from pylsl.resolve import resolve_stream
 
 # Add the project root directory to the Python path
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -20,13 +21,13 @@ predictor = EEGCNNPredictor(model_path, device='cpu')
 
 # After defining the desired channels and before the while loop
 print("Looking for an EEG stream...")
-streams = resolve_streams()
+streams = resolve_stream('type', 'EEG')
 print(streams)
 
 # if len(streams) == 0: and then wait until the stream is found
 while len(streams) == 0:
     print("No EEG streams found. Make sure your EEG device is streaming.")
-    streams = resolve_streams()
+    streams = resolve_stream('type', 'EEG')
 
 # if len(streams) == 0:
 #     raise RuntimeError("No EEG streams found. Make sure your EEG device is streaming.")
@@ -37,9 +38,9 @@ inlet = StreamInlet(streams[0])
 print("EEG stream resolved. Receiving data...")
 
 # Get stream info to extract sampling frequency and channel information
-info = inlet.info()
-sfreq = info.nominal_srate()
-n_channels = info.channel_count()
+# info = inlet.info()
+sfreq = 250  # info.nominal_srate()
+n_channels = 24  # info.channel_count()
 
 # Define chunk duration in seconds and calculate the number of samples per chunk
 chunk_duration = 1.0  # seconds
@@ -55,7 +56,7 @@ while True:
     # Collect data until we have the desired number of samples
     while samples_collected < chunk_samples:
         # Pull a chunk of data from the inlet
-        chunk, ts = inlet.pull_chunk(timeout=1.0, max_samples=chunk_samples - samples_collected)
+        chunk, ts = inlet.pull_chunk()
         if ts:
             samples.append(chunk)
             timestamps.extend(ts)
