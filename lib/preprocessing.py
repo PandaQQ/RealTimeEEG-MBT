@@ -103,7 +103,8 @@ def freq_adjust(data, from_freq=250, to_freq=125):
 
 def process_eeg_chunk(chunk, srate=250):
     # Convert from microvolts to volts if needed
-    data_in_volts = chunk * 1e6  # chunk is shape (250, 24) for example
+    # data_in_volts = chunk / 1e6
+    data_in_volts = chunk * 1e6  # chunk is shape (250, 24) for example or
 
     # Transpose to (n_channels, n_samples) for MNE functions
     data_in_volts = data_in_volts.T
