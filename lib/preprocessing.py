@@ -99,3 +99,23 @@ def freq_adjust(data, from_freq=250, to_freq=125):
     for ch_idx in range(n_channels):
         new_data[ch_idx, :] = resample(data[ch_idx, :], new_times)
     return new_data
+
+
+def process_eeg_chunk(chunk, srate=250):
+    # Convert from microvolts to volts if needed
+    data_in_volts = chunk * 1e6  # chunk is shape (250, 24) for example
+
+    # Transpose to (n_channels, n_samples) for MNE functions
+    data_in_volts = data_in_volts.T
+
+    # Apply a band-pass filter from 1 to 45 Hz
+    filtered_data = mne.filter.filter_data(
+        data_in_volts,
+        sfreq=srate,
+        l_freq=1.,
+        h_freq=45.,
+        method='fir',
+        fir_design='firwin'
+    )
+
+    return filtered_data.T  # Transpose back to (n_samples, n_channels)

@@ -13,9 +13,10 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(script_dir)  # Project root
 sys.path.append(parent_dir)
 
-from lib.preprocessing import spa_cleaning_by_second, cwt_transform_pywt, freq_adjust
+from lib.preprocessing import spa_cleaning_by_second, cwt_transform_pywt, freq_adjust, process_eeg_chunk
 from lib.eeg_cnn_predictor import EEGCNNPredictor
 import lib.light_control as light
+
 
 # Load model
 model_path = './models/eeg_cnn_model.pth'
@@ -86,6 +87,9 @@ while True:
                 # Each element of all_data_buffer is [channel_1, channel_2, ...].
                 # Turn it into a NumPy array of shape (num_samples, num_channels).
                 recent_samples = np.array(all_data_buffer[-block_size:])  # shape = (250, n_channels)
+
+                # handle 1-45 Hz band-pass filter and convert to microvolts
+                recent_samples = process_eeg_chunk(recent_samples, srate=250)
 
                 # 1) Frequency adjustments (if needed)
                 adjusted_data = freq_adjust(recent_samples.T, from_freq=250, to_freq=125)
