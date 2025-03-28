@@ -13,7 +13,7 @@ sys.path.append(parent_dir)
 
 from lib.preprocessing import spa_cleaning_by_second, cwt_transform_pywt, freq_adjust
 from lib.eeg_cnn_predictor import EEGCNNPredictor
-import lib.light_control as light
+# import lib.light_control as light
 
 # Load model
 model_path = './models/eeg_cnn_model.pth'
@@ -92,10 +92,13 @@ while True:
     predictions.append(prediction['predicted_class_label'])
 
     if prediction['predicted_class_label'] == 'Active':
-        light.red_control()
+        # light.red_control()
         print("Active channel detected")
     else:
-        light.green_control()
+        # light.green_control()
         print("Resting channel detected")
+
+    if len(predictions) > 48*30:
+        print(predictions)
 
 print(predictions)

@@ -5,7 +5,7 @@ import sys
 import os
 
 # Load EEG data from WM_Oct8_testing.vhdr file
-eeglab_file = './data/wireless_raw_2.set'
+eeglab_file = './data/wireless_raw_8.set'
 raw = mne.io.read_raw_eeglab(eeglab_file, preload=True)
 
 # Add standard electrode locations
@@ -20,7 +20,7 @@ raw.filter(1., 45., fir_design='firwin')
 
 # Convert from microvolts to volts
 eeg_data_in_volts = raw.get_data() * 1e6
-# If you want to replace the data in the MNE object itself:
+# # If you want to replace the data in the MNE object itself:
 raw._data = eeg_data_in_volts
 
 # Extract data and metadata

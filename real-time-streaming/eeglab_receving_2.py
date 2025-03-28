@@ -15,7 +15,7 @@ sys.path.append(parent_dir)
 
 from lib.preprocessing import spa_cleaning_by_second, cwt_transform_pywt, freq_adjust, process_eeg_chunk
 from lib.eeg_cnn_predictor import EEGCNNPredictor
-import lib.light_control as light
+# import lib.light_control as light
 
 
 # Load model
@@ -51,6 +51,8 @@ refresh_rate = 1.0  # seconds between processing steps
 all_data_buffer = []  # Will hold samples
 all_timestamps = []  # Will hold timestamps
 
+predictions = []
+
 # We’ll base the “once per second” refresh on LSL timestamps
 # or you can use local wall-clock time with time.time().
 last_process_time = None
@@ -63,12 +65,14 @@ while True:
     if chunk:
         # 'chunk' is a list of [sample1, sample2, ...], each sample is [ch1, ch2, ...]
         # Extend our buffer with the new chunk
-        all_data_buffer.extend(chunk)
+        # all_data_buffer.extend(chunk)
+        all_data_buffer.extend(chunk)  # shape from LSL: list of [ch1, ch2, ...]
+        all_timestamps.extend(ts_chunk)  # list of float timestamps
 
-        if chunk:
-            # Extend our buffers
-            all_data_buffer.extend(chunk)  # shape from LSL: list of [ch1, ch2, ...]
-            all_timestamps.extend(ts_chunk)  # list of float timestamps
+        # if chunk:
+        # Extend our buffers
+        # all_data_buffer.extend(chunk)  # shape from LSL: list of [ch1, ch2, ...]
+        # all_timestamps.extend(ts_chunk)  # list of float timestamps
 
         if all_timestamps:
             # Current LSL time is the timestamp of the latest sample
@@ -88,11 +92,25 @@ while True:
                 # Turn it into a NumPy array of shape (num_samples, num_channels).
                 recent_samples = np.array(all_data_buffer[-block_size:])  # shape = (250, n_channels)
 
-                # handle 1-45 Hz band-pass filter and convert to microvolts
-                recent_samples = process_eeg_chunk(recent_samples, srate=250)
+                # handle 1-45 Hz band-pass filter on microvolts
+                band_pass_data = process_eeg_chunk(recent_samples, srate=srate)
+
+                # handle 1-45 Hz band-pass filter on microvolts
+                # Convert from microvolts to volts
+                # data_in_volts = recent_samples / 1e6
+                # band_pass_data = mne.filter.filter_data(
+                #     data_in_volts.T,
+                #     sfreq=srate,
+                #     l_freq=1.,
+                #     h_freq=45.,
+                #     method='fir',
+                #     fir_design='firwin'
+                # ).T
+                # # Convert back to microvolts
+                # band_pass_data *= 1e6
 
                 # 1) Frequency adjustments (if needed)
-                adjusted_data = freq_adjust(recent_samples.T, from_freq=250, to_freq=125)
+                adjusted_data = freq_adjust(band_pass_data.T, from_freq=250, to_freq=125)
                 # 2) SPA cleaning
                 clean_data = spa_cleaning_by_second(adjusted_data)
                 # 3) CWT transform
@@ -100,14 +118,23 @@ while True:
                 # 4) Predict
                 prediction = predictor.predict(power_features)
                 print(f"Prediction for segment {prediction['predicted_class_label']}")
+                # append the prediction to the list
+                predictions.append(prediction['predicted_class_label'])
+
                 if prediction['predicted_class_label'] == 'Active':
-                    light.red_control()
+                    # light.red_control()
                     # print with timestamp with 2 decimal places
                     print("Active channel detected" + " at " + str(round(current_lsl_time, 2)))
                 else:
-                    light.green_control()
-                    print("Resting channel detected" + " at " + str(round(current_lsl_time, 2)))
+                    # light.green_control()
+                     print("Resting channel detected" + " at " + str(round(current_lsl_time, 2)))
                 # Option A: “Hop” exactly 1 second ahead
                 last_process_time += refresh_rate
+
+                if len(predictions) == 360:
+                    print(predictions)
+
+                # print the len of all_data_buffer
+                # print(f"Buffer length: {len(all_data_buffer)}")
     # Brief sleep to avoid busy-wait
     time.sleep(0.01)
