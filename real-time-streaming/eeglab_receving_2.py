@@ -92,27 +92,24 @@ while True:
                 # Turn it into a NumPy array of shape (num_samples, num_channels).
                 recent_samples = np.array(all_data_buffer[-block_size:])  # shape = (250, n_channels)
 
-                # handle 1-45 Hz band-pass filter on microvolts
-                band_pass_data = process_eeg_chunk(recent_samples, srate=srate)
+                # 1) Frequency adjustments( if needed)
+                # shape = (250, n_channels) to shape = (125, n_channels)
+                recent_samples = recent_samples[::2]  # Downsample by a factor of 2
 
+                # 2) Band-pass filter
                 # handle 1-45 Hz band-pass filter on microvolts
                 # Convert from microvolts to volts
-                # data_in_volts = recent_samples / 1e6
-                # band_pass_data = mne.filter.filter_data(
-                #     data_in_volts.T,
-                #     sfreq=srate,
-                #     l_freq=1.,
-                #     h_freq=45.,
-                #     method='fir',
-                #     fir_design='firwin'
-                # ).T
-                # # Convert back to microvolts
-                # band_pass_data *= 1e6
+                band_pass_data = mne.filter.filter_data(
+                    recent_samples.T,
+                    sfreq=125,
+                    l_freq=1.,
+                    h_freq=45.,
+                    fir_design='firwin',
+                    pad='reflect_limited'
+                ).T
 
-                # 1) Frequency adjustments (if needed)
-                adjusted_data = freq_adjust(band_pass_data.T, from_freq=250, to_freq=125)
                 # 2) SPA cleaning
-                clean_data = spa_cleaning_by_second(adjusted_data)
+                clean_data = spa_cleaning_by_second(band_pass_data)
                 # 3) CWT transform
                 power_features = cwt_transform_pywt(clean_data)
                 # 4) Predict

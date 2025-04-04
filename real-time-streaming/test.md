@@ -38,3 +38,8 @@
 'Active', 'Active', 'Active', 'Resting', 'Active', 'Resting', 'Resting', 'Active', 'Active', 'Active', 'Active', 
 'Active', 'Resting', 'Active', 'Active', 'Resting']
 ```
+
+
+- Resample to 125
+- band-pass filter 1-45
+a[00:2]
