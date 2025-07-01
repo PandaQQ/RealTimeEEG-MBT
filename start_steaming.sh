@@ -20,8 +20,8 @@ python ./real-time-streaming/eeglab_streaming.py &
 sleep 2
 
 # Run the eeglab_receiving.py script
-echo "Running eeglab_receving.py..."
-python ./real-time-streaming/eeglab_receving.py
+#echo "Running eeglab_receving.py..."
+#python ./real-time-streaming/eeglab_receving.py
 
 # Run the spa_export.py script
 #echo "Running spa_export.py..."
