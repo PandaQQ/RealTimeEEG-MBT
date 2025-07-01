@@ -38,7 +38,7 @@ for i in range(NUM_CHANNELS):
     lines.append(line)
 
 
-axes[0].set_ylim(-100, 100)  # Adjust based on your EEG data range
+axes[0].set_ylim(-500, 500)  # Adjust based on your EEG data range
 axes[0].set_xlim(-BUFFER_DURATION, 0)  # Adjust based on your EEG data range
 axes[0].grid(True)
 axes[0].set_xlabel('Time (s)')

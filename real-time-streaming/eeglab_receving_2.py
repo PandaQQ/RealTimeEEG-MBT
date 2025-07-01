@@ -19,7 +19,7 @@ from lib.eeg_cnn_predictor import EEGCNNPredictor
 
 
 # Load model
-model_path = './models/eeg_cnn_model.pth'
+model_path = '../models/eeg_cnn_model.pth'
 predictor = EEGCNNPredictor(model_path, device='cpu')
 
 # After defining the desired channels and before the while loop
